@@ -3,6 +3,7 @@ name: Make ipa
 on:
   push:
     branches: ["master"]
+
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -28,23 +29,14 @@ jobs:
       with:
         key: theos-cache-battman
         path: ~/theos
-    # Theos itself is not used in this project
-    #- name: Clone theos
-    #  if: steps.cache-theos.outputs.cache-hit != 'true'
-    #  uses: actions/checkout@v4
-    #  with:
-    #    submodules: 'recursive'
-    #    repository: 'theos/theos'
-    #    path: 'theos'
     - name: Setup SDK
       if: steps.cache-theos.outputs.cache-hit != 'true'
       run: |
-        #mv $GITHUB_WORKSPACE/theos ~/theos
         mkdir -p ~/theos/sdks
         export THEOS=~/theos
         curl -LO https://github.com/sbingner/llvm-project/releases/latest/download/linux-ios-arm64e-clang-toolchain.tar.lzma
         TMP=$(mktemp -d)
-        tar -xf  linux-ios-arm64e-clang-toolchain.tar.lzma -C $TMP
+        tar -xf linux-ios-arm64e-clang-toolchain.tar.lzma -C $TMP
         mkdir -p $THEOS/toolchain/linux/iphone
         mv $TMP/ios-arm64e-clang-toolchain/* $THEOS/toolchain/linux/iphone/
         rm -rf linux-ios-arm64e-clang-toolchain.tar.lzma $TMP
@@ -77,8 +69,3 @@ jobs:
         if-no-files-found: error
         retention-days: 1
         compression-level: 0
-        
-        
-        
-        
-        
